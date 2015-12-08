@@ -20,7 +20,7 @@
 #define DIE(x)   perror(x),exit(errno)
 #define SHORTMESS 128
 #define MAXDEST 64
-#define PORT 63399
+#define PORT 53011
 
 /*---------------------------DATA STRUCTURES----------------------------*/
 typedef struct str_servlet {
