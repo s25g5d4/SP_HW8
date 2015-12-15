@@ -16,7 +16,7 @@ SRC = 				\
 	list_stats.c	\
 	zero_stats.c	\
 	zap_stale.c		\
-	get_stale.c	
+	get_stale.c
 
 OBJ = $(SRC:.c=.o)
 
@@ -26,6 +26,9 @@ $(OBJ) : sms.h
 
 $(TGT) : $(OBJ)
 	cc -o $(TGT) $(OBJ) $(LIBS)
+
+pack : $(SRC) Makefile progress.md
+	tar cvf B023040011_SP_HW8.tar $(SRC) Makefile progress.md
 
 clean :
 	@rm -f $(OBJ) $(TGT)

@@ -75,3 +75,4 @@ extern Pending *pending_stack;	/* pile of stale servlets				*/
 extern Stats * history;			/* start of stats linked list			*/
 extern sem_t garbage_time;		/* schedule garbage collection			*/
 extern pthread_attr_t attr;		/* set to make ALL threads detached		*/
+extern pthread_mutex_t door_lock;
