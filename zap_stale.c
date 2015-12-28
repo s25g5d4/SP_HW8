@@ -15,7 +15,9 @@ void zap_stale(void) /* call disconnect when needed */
     int stale;
     scanf("%d", &stale);
 
+    pthread_mutex_lock(&door_lock);
     Servlet *found = get_stale(stale);
+    pthread_mutex_unlock(&door_lock);
     if (found != NULL) {
         printf("Found a stale one\n");
         found->aborted = 1;

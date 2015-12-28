@@ -26,11 +26,10 @@ void list_conn(void) /* list number of current connections */
        return;
     }
 
-    Servlet *it_start = it;
-    int count = 0;
+    int count = 1;
     int max_age = 0;
 
-    while (it->next != it_start) {
+    while (it->next != door) {
         ++count;
         int diff = (int)difftime(current_time, it->start);
         if (diff > max_age)

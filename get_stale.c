@@ -12,14 +12,14 @@ Servlet *get_stale(int secs) /* find ONE stale client */
     if (it == NULL)
         return NULL;
 
-    Servlet *it_start = it;
     time_t current_time = time(NULL);
-
-    while (it->next != it_start) {
+    
+    it = it->prev;
+    while (it != door) {
         if ((int)difftime(current_time, it->start) > secs)
             return it;
         else
-            it = it->next;
+            it = it->prev;
 
     }
 

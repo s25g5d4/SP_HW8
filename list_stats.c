@@ -37,7 +37,7 @@ void list_stats(void) /* Summmarise statistics */
     double average_size = (double)size / (double)count;
 
     printf("%d connections\n", count);
-    printf("%.1lf aborted\n", percent_aborted);
+    printf("%.1lf%% aborted\n", percent_aborted * 100.0);
     printf("average connect = %.1lf seconds\n", average_connect);
     printf("average size = %.1lf bytes\n", average_size);
 }

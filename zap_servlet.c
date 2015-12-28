@@ -28,7 +28,7 @@ void zap_servlet(Servlet *victim) /* remove and free memeory */
     if (!bad_filename) {
         int fd = open(victim->dest, O_WRONLY | O_CREAT | O_TRUNC, 0666);
         if (fd == -1) {
-            printf("Can't open file \"%s\"\n", victim->dest);
+            printf("\nCan't open file \"%s\"\n", victim->dest);
         }
         else {
             write(fd, victim->message, victim->chars_read);

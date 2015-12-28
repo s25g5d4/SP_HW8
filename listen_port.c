@@ -65,10 +65,10 @@ void make_servelet_list()
     }
     else {
         Servlet *new_servlet = (Servlet *)malloc(sizeof (Servlet));
-        new_servlet->next = door->next;
-        door->next->prev = new_servlet;
-        door->next = new_servlet;
-        new_servlet->prev = door;
+        new_servlet->prev = door->prev;
+        door->prev->next = new_servlet;
+        door->prev = new_servlet;
+        new_servlet->next = door;
         door = new_servlet;
     }
 }
