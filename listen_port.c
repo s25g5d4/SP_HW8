@@ -1,24 +1,24 @@
 /*
- *	listen_port :
- *	The body of the thread which listens on a particular
- *	port number (it's sole argument).
- *	Whenever a new connection is requested it calls
- *	make_servelet_list and then fires off a new thread running.
- *	It must set two fields in the Servlet structure :
- *		1) fd
- *		2) start
+ * listen_port :
+ * The body of the thread which listens on a particular
+ * port number (it's sole argument).
+ * Whenever a new connection is requested it calls
+ * make_servelet_list and then fires off a new thread running.
+ * It must set two fields in the Servlet structure :
+ *     1) fd
+ *     2) start
  */
 
 #include "sms.h"
 
-static int sd;
-static struct sockaddr_in server;
-pthread_mutex_t door_lock;
 
-void make_servelet_list(int cd);
+void make_servelet_list();
 
-void *listen_port(void *info) { /* body of port listener */
-    sd = socket(AF_INET, SOCK_STREAM, 0);
+void *listen_port(void *info) /* body of port listener */
+{
+    struct sockaddr_in server;
+    int sd = socket(AF_INET, SOCK_STREAM, 0);
+
     if (sd == -1) {
         DIE(__FILE__ ": listen_port: socket");
     }
@@ -31,28 +31,33 @@ void *listen_port(void *info) { /* body of port listener */
         DIE(__FILE__ ": listen_port: bind");
     }
 
-    if (listen(sd, 50), == -1) {
+    if (listen(sd, 50) == -1) {
         DIE(__FILE__ ": listen_port: listen");
     }
 
-    pthread_mutex_init(&door_lock, NULL);
-
     while (1) {
         socklen_t n;
-        int cd = accept((struct sockaddr *)&server, &n);
+        struct sockaddr_in client;
+        int cd = accept(sd, (struct sockaddr *)&client, &n);
         if (cd == -1) {
             DIE(__FILE__ ": listen_port: accept");
         }
 
         pthread_mutex_lock(&door_lock);
-        make_servelet_list(cd);
-        pthread_create(&door->thread, &attr, serv_client, (void *)door);
+        make_servelet_list();
+        Servlet *current = door;
         pthread_mutex_unlock(&door_lock);
+        current->fd = cd;
+        current->start = time(NULL);
+        current->cust_ip = ntohl(client.sin_addr.s_addr);
+        current->aborted = 0;
+        pthread_create(&current->thread, &attr, serve_client, (void *)door);
     }
     return NULL;
 }
 
-void make_servelet_list(int cd) {
+void make_servelet_list()
+{
     if (door == NULL) {
         door = (Servlet *)malloc(sizeof (Servlet));
         door->next = door;
@@ -66,6 +71,4 @@ void make_servelet_list(int cd) {
         new_servlet->prev = door;
         door = new_servlet;
     }
-    door->fd = cd;
-    door->start = time(NULL);
 }

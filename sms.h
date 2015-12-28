@@ -1,11 +1,12 @@
 /*
- *	sms.h :
- *	header file for short message service project
+ * sms.h :
+ * header file for short message service project
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
@@ -24,31 +25,31 @@
 
 /*---------------------------DATA STRUCTURES----------------------------*/
 typedef struct str_servlet {
-  int fd;						/* Socket connection					*/
-  pthread_t thread;				/* For control							*/
-  int cust_ip;					/* IP addr of client					*/
-  char dest[MAXDEST];			/* addressee							*/
-  char message[SHORTMESS];		/* message text							*/
-  int chars_read;				/* size of mess so far					*/
-  time_t start;					/* Connection opened					*/
-  time_t finish;				/* Connection closed					*/
-  int aborted;					/* boolean flag							*/
-  struct str_servlet * prev;	/* Doubly linked list					*/
-  struct str_servlet * next;	/* Doubly linked list					*/
+  int fd;                       /* Socket connection                    */
+  pthread_t thread;             /* For control                          */
+  uint32_t cust_ip;             /* IP addr of client                    */
+  char dest[MAXDEST];           /* addressee                            */
+  char message[SHORTMESS];      /* message text                         */
+  size_t chars_read;            /* size of mess so far                  */
+  time_t start;                 /* Connection opened                    */
+  time_t finish;                /* Connection closed                    */
+  int aborted;                  /* boolean flag                         */
+  struct str_servlet * prev;    /* Doubly linked list                   */
+  struct str_servlet * next;    /* Doubly linked list                   */
 } Servlet;
 
 typedef struct str_stats {
-  int cust_ip;					/* IP addr of client					*/
-  char dest[MAXDEST];			/* addressee							*/
-  int size;						/* message size							*/
-  int connect;					/* connect time in secs					*/
-  int aborted;					/* boolean flag							*/
-  struct str_stats * next;		/* Linked list							*/
+  int cust_ip;                  /* IP addr of client                    */
+  char dest[MAXDEST];           /* addressee                            */
+  int size;                     /* message size                         */
+  int connect;                  /* connect time in secs                 */
+  int aborted;                  /* boolean flag                         */
+  struct str_stats * next;      /* Linked list                          */
 } Stats;
 
 typedef struct str_pending {
-  Servlet * head;				/* recently terminated					*/
-  struct str_pending * tail;	/* linked list							*/
+  Servlet * head;               /* recently terminated                  */
+  struct str_pending * tail;    /* linked list                          */
 } Pending;
 
 typedef struct {
@@ -57,22 +58,24 @@ typedef struct {
 } Menu_item ;
 
 /*---------------------------FUNCTION PROTOTYPES------------------------*/
-void *collect_garb(void *);		/* garbage collector					*/
-void *listen_port(void *);		/* body of port listener				*/
-void menu(Menu_item *);			/* user interface menu					*/
-void *serve_client(void *); 	/* body of servlet thread				*/
-void disconnect(Servlet * );	/* close socket,timestamp,alert garbo	*/
-void zap_servlet(Servlet *);	/* store info, unlink and free memory	*/
-void list_conn(void);			/* list number of current connections 	*/
-void list_stats(void);  		/* Summarise statistics					*/
-void zap_stale(void);			/* Call disconnect when needed			*/
-void zero_stats(void);  		/* re-start statistics					*/
-Servlet *get_stale(int);		/* find ONE stale client				*/
+void *collect_garb(void *);     /* garbage collector                    */
+void *listen_port(void *);      /* body of port listener                */
+void menu(Menu_item *);         /* user interface menu                  */
+void *serve_client(void *);     /* body of servlet thread               */
+void disconnect(Servlet * );    /* close socket,timestamp,alert garbo   */
+void zap_servlet(Servlet *);    /* store info, unlink and free memory   */
+void list_conn(void);           /* list number of current connections   */
+void list_stats(void);          /* Summarise statistics                 */
+void zap_stale(void);           /* Call disconnect when needed          */
+void zero_stats(void);          /* re-start statistics                  */
+Servlet *get_stale(int);        /* find ONE stale client                */
 
 /*---------------------------GLOBAL VARIABLES---------------------------*/
-extern Servlet *door;			/* entrance to doubly linked list		*/
-extern Pending *pending_stack;	/* pile of stale servlets				*/
-extern Stats * history;			/* start of stats linked list			*/
-extern sem_t garbage_time;		/* schedule garbage collection			*/
-extern pthread_attr_t attr;		/* set to make ALL threads detached		*/
+extern Servlet *door;           /* entrance to doubly linked list       */
+extern Pending *pending_stack;  /* pile of stale servlets               */
+extern Stats * history;         /* start of stats linked list           */
+extern sem_t garbage_time;      /* schedule garbage collection          */
+extern pthread_attr_t attr;     /* set to make ALL threads detached     */
 extern pthread_mutex_t door_lock;
+extern pthread_mutex_t stat_lock;
+extern pthread_mutex_t pend_lock;
