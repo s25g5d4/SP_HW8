@@ -27,7 +27,7 @@ $(TGT): $(OBJ)
 #	$(CC) -o $(TGT) $(OBJ) $(LIBS)
 
 pack: $(SRC) Makefile
-	tar cvf B023040011_SP_HW8.tar $(SRC) Makefile
+	tar cvf B023040011_SP_HW8.tar $(SRC) Makefile sms.h
 
 clean :
-	@rm -f $(OBJ) $(TGT)
+	@rm -f $(OBJ) $(TGT) B023040011_SP_HW8.tar
